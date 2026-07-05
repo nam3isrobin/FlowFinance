@@ -39,7 +39,7 @@ Since Flow Finance is a static client-side web application, you can host it for 
 ## 📂 Project Structure
 
 ```text
-liquid-finance/
+FlowFinance/
 ├── .gitignore         # Ignores IDE files and OS metadata
 ├── index.html         # Main application interface and structure
 ├── styles.css         # Custom CSS variables, glassmorphism, responsive grid
@@ -56,8 +56,8 @@ To run Flow Finance locally:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/liquid-finance.git
-   cd liquid-finance
+   git clone https://github.com/YOUR_USERNAME/FlowFinance.git
+   cd FlowFinance
    ```
 
 2. **Run it:**
@@ -76,4 +76,4 @@ To run Flow Finance locally:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](file:///C:/Users/Robin/liquid-finance/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](file:///C:/Users/Robin/FlowFinance/LICENSE) file for details.
