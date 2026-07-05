@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#061318">
+  <title>Flow Finance - SIP, EMI & Loan Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <canvas id="liquid-scene" aria-hidden="true"></canvas>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#" aria-label="Flow Finance home">
+        <span class="brand-mark"><i data-lucide="waves"></i></span>
+        <span>Flow<span>Finance</span></span>
+      </a>
+      <h1 class="header-tagline">Make your money <span>flow.</span></h1>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="intro">
+      <p class="eyebrow">Plan with clarity</p>
+      <p class="intro-desc">Explore investments and loans with instant, visual projections.</p>
+    </section>
+
+    <nav class="calculator-tabs" aria-label="Calculator type">
+      <button class="tab active" data-mode="sip" type="button"><i data-lucide="trending-up"></i><span>SIP</span></button>
+      <button class="tab" data-mode="emi" type="button"><i data-lucide="wallet-cards"></i><span>EMI</span></button>
+      <button class="tab" data-mode="loan" type="button"><i data-lucide="landmark"></i><span>Loan</span></button>
+    </nav>
+
+    <section class="workspace">
+      <div class="control-panel glass">
+        <div class="panel-heading">
+          <div>
+            <p class="section-kicker" id="mode-kicker">Investment planner</p>
+            <h2 id="mode-title">Build your SIP</h2>
+          </div>
+          <button class="icon-button subtle" id="reset-button" type="button" title="Reset values" aria-label="Reset calculator values"><i data-lucide="rotate-ccw"></i></button>
+        </div>
+
+        <div class="fields">
+          <div class="field" data-field="amount">
+            <div class="field-label"><label id="amount-label" for="amount-input">Monthly investment</label><span id="amount-hint">per month</span></div>
+            <div class="value-input"><span class="prefix">₹</span><input id="amount-input" type="number" min="500" max="500000" step="500" value="25000" inputmode="numeric"></div>
+            <input id="amount-range" type="range" min="500" max="500000" step="500" value="25000" aria-label="Monthly investment slider">
+            <div class="range-limits"><span>₹500</span><span>₹5L</span></div>
+          </div>
+
+          <div class="field">
+            <div class="field-label"><label for="rate-input">Expected annual return</label><span id="rate-hint">estimated</span></div>
+            <div class="value-input suffix-input"><input id="rate-input" type="number" min="1" max="30" step="0.1" value="12" inputmode="decimal"><span>%</span></div>
+            <input id="rate-range" type="range" min="1" max="30" step="0.1" value="12" aria-label="Annual rate slider">
+            <div class="range-limits"><span>1%</span><span>30%</span></div>
+          </div>
+
+          <div class="field">
+            <div class="field-label"><label for="years-input">Time period</label><span id="years-hint">long term</span></div>
+            <div class="value-input suffix-input"><input id="years-input" type="number" min="1" max="40" step="1" value="15" inputmode="numeric"><span>years</span></div>
+            <input id="years-range" type="range" min="1" max="40" step="1" value="15" aria-label="Time period slider">
+            <div class="range-limits"><span>1 year</span><span>40 years</span></div>
+          </div>
+        </div>
+
+        <div class="quick-presets" id="quick-presets" aria-label="Quick presets">
+          <button type="button" data-preset="starter">Starter</button>
+          <button type="button" data-preset="steady">Steady</button>
+          <button type="button" data-preset="ambitious">Ambitious</button>
+        </div>
+      </div>
+
+      <div class="results-panel glass">
+        <div class="result-header">
+          <div>
+            <p class="section-kicker" id="result-kicker">Projected wealth</p>
+            <div class="hero-value" id="primary-result">₹1.26 Cr</div>
+            <p class="result-caption" id="result-caption">after 15 years</p>
+          </div>
+          <div class="growth-badge" id="growth-badge"><i data-lucide="arrow-up-right"></i><span>+180%</span></div>
+        </div>
+
+        <div class="chart-wrap">
+          <canvas id="projection-chart" aria-label="Projection chart"></canvas>
+          <div class="chart-tooltip" id="chart-tooltip" hidden></div>
+        </div>
+
+        <div class="breakdown" id="breakdown">
+          <div><span class="dot principal"></span><p><small id="principal-label">Invested</small><strong id="principal-value">₹45.00L</strong></p></div>
+          <div><span class="dot returns"></span><p><small id="returns-label">Estimated returns</small><strong id="returns-value">₹81.14L</strong></p></div>
+        </div>
+
+        <div class="result-actions">
+          <button class="secondary-button" id="copy-button" type="button"><i data-lucide="copy"></i><span>Copy summary</span></button>
+          <button class="primary-button" id="download-button" type="button"><i data-lucide="download"></i><span>Export CSV</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="insight-strip glass" aria-live="polite">
+      <span class="insight-icon"><i data-lucide="sparkles"></i></span>
+      <p><strong id="insight-title">Time is your strongest multiplier.</strong> <span id="insight-copy">Adding five more years could substantially increase your projected corpus.</span></p>
+    </section>
+  </main>
+
+  <footer><span>Calculations are estimates, not financial advice.</span><span>Built for better money decisions.</span></footer>
+
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
