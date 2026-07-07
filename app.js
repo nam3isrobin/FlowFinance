@@ -99,6 +99,20 @@ function render() {
     $('insight-title').textContent = mode === 'emi' ? 'Balance comfort with tenure.' : 'See the full cost, not just the rate.';
     $('insight-copy').textContent = `Over ${result.years} years, interest adds ${inr(result.secondary)} to the amount borrowed.`;
   }
+
+  const currentValues = values();
+  const presets = MODES[mode].presets;
+  let activePreset = null;
+  for (const [key, presetValues] of Object.entries(presets)) {
+    if (presetValues.every((val, idx) => val === currentValues[idx])) {
+      activePreset = key;
+      break;
+    }
+  }
+  document.querySelectorAll('#quick-presets button').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.preset === activePreset);
+  });
+
   ranges.forEach(updateRange);
   lucide.createIcons();
   drawChart();
@@ -179,13 +193,13 @@ function drawChart() {
   chartCtx.lineWidth = 1;
   for (let i = 0; i < 4; i++) { const gy = pad.t + i * (h - pad.t - pad.b) / 3; chartCtx.beginPath(); chartCtx.moveTo(pad.l, gy); chartCtx.lineTo(w - pad.r, gy); chartCtx.stroke(); }
   const gradient = chartCtx.createLinearGradient(0, pad.t, 0, h - pad.b);
-  gradient.addColorStop(0, 'rgba(124,246,200,.34)'); gradient.addColorStop(1, 'rgba(124,246,200,0)');
+  gradient.addColorStop(0, 'rgba(255, 59, 92, .34)'); gradient.addColorStop(1, 'rgba(255, 59, 92, 0)');
   chartCtx.beginPath(); lastSeries.forEach((p, i) => i ? chartCtx.lineTo(x(i), y(p.total)) : chartCtx.moveTo(x(i), y(p.total)));
   chartCtx.lineTo(x(lastSeries.length - 1), h - pad.b); chartCtx.lineTo(pad.l, h - pad.b); chartCtx.closePath(); chartCtx.fillStyle = gradient; chartCtx.fill();
   chartCtx.beginPath(); lastSeries.forEach((p, i) => i ? chartCtx.lineTo(x(i), y(p.total)) : chartCtx.moveTo(x(i), y(p.total)));
-  chartCtx.strokeStyle = '#7cf6c8'; chartCtx.lineWidth = 2.5; chartCtx.lineJoin = 'round'; chartCtx.stroke();
+  chartCtx.strokeStyle = '#ff3b5c'; chartCtx.lineWidth = 2.5; chartCtx.lineJoin = 'round'; chartCtx.stroke();
   chartCtx.beginPath(); lastSeries.forEach((p, i) => i ? chartCtx.lineTo(x(i), y(p.principal)) : chartCtx.moveTo(x(i), y(p.principal)));
-  chartCtx.strokeStyle = '#63dbe6'; chartCtx.lineWidth = 1.5; chartCtx.setLineDash([5, 5]); chartCtx.stroke(); chartCtx.setLineDash([]);
+  chartCtx.strokeStyle = '#fb7185'; chartCtx.lineWidth = 1.5; chartCtx.setLineDash([5, 5]); chartCtx.stroke(); chartCtx.setLineDash([]);
   chartCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted'); chartCtx.font = '10px DM Sans';
   chartCtx.fillText('Now', pad.l, h - 5); chartCtx.textAlign = 'right'; chartCtx.fillText(`${lastSeries.length - 1}y`, w - pad.r, h - 5); chartCtx.textAlign = 'left';
   chartPoints = lastSeries.map((p, i) => ({ x: x(i), y: y(p.total), point: p }));
@@ -213,17 +227,17 @@ function initScene() {
   const canvas = $('liquid-scene');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.7)); renderer.setSize(innerWidth, innerHeight); renderer.outputColorSpace = THREE.SRGBColorSpace;
-  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x061318); scene.fog = new THREE.FogExp2(0x061318, .055);
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x120507); scene.fog = new THREE.FogExp2(0x120507, .055);
   const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, .1, 100); camera.position.set(0, 0, 10);
   const geometry = new THREE.IcosahedronGeometry(2.25, 5); const original = geometry.attributes.position.array.slice();
-  const material = new THREE.MeshPhysicalMaterial({ color: 0x4bd6bd, roughness: .12, metalness: .05, transmission: .22, thickness: 1.8, transparent: true, opacity: .55, clearcoat: 1, clearcoatRoughness: .1, emissive: 0x062c29, emissiveIntensity: .7 });
+  const material = new THREE.MeshPhysicalMaterial({ color: 0xff3b5c, roughness: .12, metalness: .05, transmission: .22, thickness: 1.8, transparent: true, opacity: .55, clearcoat: 1, clearcoatRoughness: .1, emissive: 0x22050b, emissiveIntensity: .7 });
   const blob = new THREE.Mesh(geometry, material); blob.position.set(4.7, .2, -1.5); scene.add(blob);
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(3.35, .025, 12, 160), new THREE.MeshBasicMaterial({ color: 0x7cf6c8, transparent: true, opacity: .2 })); ring.position.set(-4.6, -2.4, -3); ring.rotation.set(1.1, .3, .2); scene.add(ring);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(3.35, .025, 12, 160), new THREE.MeshBasicMaterial({ color: 0xff3b5c, transparent: true, opacity: .2 })); ring.position.set(-4.6, -2.4, -3); ring.rotation.set(1.1, .3, .2); scene.add(ring);
   const particlesGeometry = new THREE.BufferGeometry(); const positions = new Float32Array(180 * 3);
   for (let i = 0; i < positions.length; i += 3) { positions[i] = (Math.random() - .5) * 22; positions[i + 1] = (Math.random() - .5) * 14; positions[i + 2] = -Math.random() * 9; }
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const particles = new THREE.Points(particlesGeometry, new THREE.PointsMaterial({ color: 0x9cfde0, size: .025, transparent: true, opacity: .42 })); scene.add(particles);
-  scene.add(new THREE.HemisphereLight(0xbaffed, 0x021013, 2.4)); const point = new THREE.PointLight(0xff8d79, 35, 14); point.position.set(-4, 3, 4); scene.add(point);
+  const particles = new THREE.Points(particlesGeometry, new THREE.PointsMaterial({ color: 0xfb7185, size: .025, transparent: true, opacity: .42 })); scene.add(particles);
+  scene.add(new THREE.HemisphereLight(0xffd5db, 0x120507, 2.4)); const point = new THREE.PointLight(0xff7675, 35, 14); point.position.set(-4, 3, 4); scene.add(point);
   const paused = matchMedia('(prefers-reduced-motion: reduce)').matches; let time = 0;
   function animate() {
     requestAnimationFrame(animate);
