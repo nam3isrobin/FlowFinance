@@ -71,5 +71,9 @@ To run Flow Finance locally:
      python -m http.server 8000
      ```
      Then navigate to `http://localhost:8000` (or the port specified by the command).
+     
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](file:///C:/Users/Robin/FlowFinance/LICENSE) file for details.
 
 ---
