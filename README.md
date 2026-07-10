@@ -56,7 +56,7 @@ To run Flow Finance locally:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/FlowFinance.git
+   git clone https://github.com/nam3isrobin/FlowFinance.git
    cd FlowFinance
    ```
 
